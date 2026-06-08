@@ -1,0 +1,60 @@
+# Workflow CI
+
+Workflow file:
+
+```text
+.github/workflows/mlops-ci.yml
+```
+
+Triggers:
+
+- `push`
+- `pull_request`
+- `workflow_dispatch`
+
+Runner:
+
+```text
+ubuntu-latest
+Python 3.11
+```
+
+The workflow creates a repository-local virtual environment:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r Membangun_model/requirements.txt
+python -m pip install -r "Monitoring dan Logging/requirements.txt"
+```
+
+Main CI commands:
+
+```bash
+python Membangun_model/telco_customer_churn_preprocessing/preprocess.py
+python Membangun_model/modelling.py
+python Membangun_model/modelling_tuning.py
+docker build -f "Monitoring dan Logging/Dockerfile" -t agungtrisutaji/telco-churn-mlops:latest .
+```
+
+Required GitHub Actions secrets:
+
+```text
+DAGSHUB_USERNAME
+DAGSHUB_TOKEN
+MLFLOW_TRACKING_URI
+DOCKERHUB_USERNAME
+DOCKERHUB_TOKEN
+```
+
+Secret values are not printed. The workflow only checks whether each secret is configured. Docker Hub push runs only when `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are present.
+
+Uploaded artifacts:
+
+```text
+Membangun_model/telco_customer_churn_preprocessing/processed/
+Membangun_model/telco_customer_churn_preprocessing/artifacts/
+Membangun_model/artifacts/
+```
+
