@@ -1,0 +1,18 @@
+.venv/
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local MLflow runs can become large and should not be submitted unless required.
+mlruns/
+Membangun_model/mlruns/
+
+# OS/editor noise.
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

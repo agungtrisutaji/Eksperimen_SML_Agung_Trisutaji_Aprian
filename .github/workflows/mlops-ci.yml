@@ -1,0 +1,98 @@
+name: Telco Churn MLOps CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-train-and-package:
+    runs-on: ubuntu-latest
+
+    env:
+      DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+      DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKER_IMAGE: agungtrisutaji/telco-churn-mlops:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Create and populate .venv
+        shell: bash
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install -r Membangun_model/requirements.txt
+          python -m pip install -r "Monitoring dan Logging/requirements.txt"
+
+      - name: Check required secrets presence
+        shell: bash
+        run: |
+          for secret_name in DAGSHUB_USERNAME DAGSHUB_TOKEN MLFLOW_TRACKING_URI DOCKERHUB_USERNAME DOCKERHUB_TOKEN; do
+            if [ -n "${!secret_name:-}" ]; then
+              echo "${secret_name} is configured"
+            else
+              echo "${secret_name} is not configured"
+            fi
+          done
+
+      - name: Check dataset presence
+        shell: bash
+        run: |
+          test -f "Membangun_model/telco_customer_churn_preprocessing/WA_Fn-UseC_-Telco-Customer-Churn.csv"
+
+      - name: Run preprocessing
+        shell: bash
+        run: |
+          source .venv/bin/activate
+          python Membangun_model/telco_customer_churn_preprocessing/preprocess.py
+
+      - name: Run baseline training
+        shell: bash
+        run: |
+          source .venv/bin/activate
+          python Membangun_model/modelling.py
+
+      - name: Run lightweight tuning
+        shell: bash
+        run: |
+          source .venv/bin/activate
+          python Membangun_model/modelling_tuning.py
+
+      - name: Upload processed data and model artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: telco-churn-mlops-artifacts
+          path: |
+            Membangun_model/telco_customer_churn_preprocessing/processed/
+            Membangun_model/telco_customer_churn_preprocessing/artifacts/
+            Membangun_model/artifacts/
+
+      - name: Build Docker image
+        shell: bash
+        run: |
+          docker build -f "Monitoring dan Logging/Dockerfile" -t "${DOCKER_IMAGE}" .
+
+      - name: Log in to Docker Hub
+        if: ${{ env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != '' }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Docker image
+        if: ${{ env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != '' }}
+        shell: bash
+        run: |
+          docker push "${DOCKER_IMAGE}"
+
