@@ -12,7 +12,7 @@ Use these first if available in `skills.sh` or another trusted skill source.
 
 | Priority | Skill / Category Keyword | Purpose |
 |---:|---|---|
-| 1 | `python-project` / `python-engineering` | Project structure, CLI scripts, pathlib, robust error handling |
+| 1 | `python-project` / `python-engineering` | Project structure, `.venv`, CLI scripts, pathlib, robust error handling |
 | 1 | `data-science-python` | pandas, EDA, train-test split, preprocessing |
 | 1 | `scikit-learn` | Pipeline, ColumnTransformer, metrics, model training |
 | 1 | `mlflow` / `experiment-tracking` | MLflow Tracking, model logging, model signature, artifacts |

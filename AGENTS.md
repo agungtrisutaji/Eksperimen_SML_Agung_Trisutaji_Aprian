@@ -101,9 +101,57 @@ Expected structure:
 - Do not create ZIP inside ZIP.
 - Do not make the repository private.
 - Do not store `.env` files in Git.
+- Do not commit `.venv/`.
 - Do not commit local `mlruns/` unless explicitly required.
 - Do not change the target column from `Churn`.
 - Monitoring must follow the Dicoding Monitoring dan Optimasi ML context: monitor both model-level signals and system-level signals, then prepare Grafana dashboard and at least two alert rules.
+
+## Local Virtual Environment Requirement
+
+All local project dependencies must be installed inside a repository-local virtual environment named `.venv`.
+
+Do not install dependencies globally.
+
+Required local setup commands for Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r Membangun_model/requirements.txt
+python -m pip install -r "Monitoring dan Logging/requirements.txt"
+```
+
+Required local setup commands for WSL/Linux/macOS:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r Membangun_model/requirements.txt
+python -m pip install -r "Monitoring dan Logging/requirements.txt"
+```
+
+The `.venv/` folder must be added to `.gitignore` and must never be committed.
+
+GitHub Actions should also create and use `.venv` inside the runner, then execute Python commands through the virtual environment. For Linux runners, use:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r Membangun_model/requirements.txt
+```
+
+For MLflow Project execution, prefer running from the activated `.venv` with:
+
+```bash
+cd Membangun_model
+mlflow run . -e main --env-manager local
+mlflow run . -e tuning --env-manager local
+```
+
+Keep `conda.yaml` for MLflow Project compatibility, but the primary local workflow must use `.venv`.
 
 ## Environment Variables
 
@@ -125,7 +173,7 @@ https://dagshub.com/agungtrisutaji/Membangun-Sistem-Machine-Learning.mlflow
 
 ## Commands That Must Work
 
-From repository root, these commands should work:
+From repository root, after activating `.venv`, these commands should work:
 
 ```bash
 python Membangun_model/telco_customer_churn_preprocessing/preprocess.py
@@ -138,8 +186,8 @@ MLflow Project commands should also work from:
 
 ```bash
 cd Membangun_model
-mlflow run . -e main
-mlflow run . -e tuning
+mlflow run . -e main --env-manager local
+mlflow run . -e tuning --env-manager local
 ```
 
 ## Expected Model Metrics

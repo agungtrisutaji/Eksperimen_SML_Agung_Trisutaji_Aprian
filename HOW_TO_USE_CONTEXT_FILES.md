@@ -45,6 +45,32 @@ Membangun_model/telco_customer_churn_preprocessing/WA_Fn-UseC_-Telco-Customer-Ch
 7. After Codex finishes, run the local validation commands.
 8. Push to GitHub and verify GitHub Actions.
 
+## Local `.venv` Setup
+
+Because the project is worked on directly inside the `MSML` folder, create `.venv` in that folder.
+
+For WSL/Linux/macOS:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r Membangun_model/requirements.txt
+python -m pip install -r "Monitoring dan Logging/requirements.txt"
+```
+
+For Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r Membangun_model/requirements.txt
+python -m pip install -r "Monitoring dan Logging/requirements.txt"
+```
+
+Make sure `.venv/` is listed in `.gitignore`.
+
 ## Important
 
 Do not commit secrets or `.env` files.

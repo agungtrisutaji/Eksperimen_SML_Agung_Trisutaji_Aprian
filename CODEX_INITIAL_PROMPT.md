@@ -35,6 +35,16 @@ Dataset:
 - Raw dataset path:
   `Membangun_model/telco_customer_churn_preprocessing/WA_Fn-UseC_-Telco-Customer-Churn.csv`
 
+Additional `.venv` requirement:
+
+- All local dependencies must be installed into `.venv` at the current workspace root.
+- Do not install dependencies globally.
+- Add `.venv/` to `.gitignore`.
+- Update README instructions to use `.venv`.
+- Update GitHub Actions so the runner creates `.venv`, activates it, installs dependencies there, and runs preprocessing/training commands inside that virtual environment.
+- For local MLflow Project commands, document `--env-manager local` because dependencies are already installed in `.venv`.
+- Keep `conda.yaml` for MLflow compatibility, but `.venv` is the main local workflow.
+
 Rules:
 
 - Preserve existing files, especially `Template_Eksperimen_MSML.ipynb`.
@@ -64,7 +74,7 @@ Tasks:
 13. Validate that the required commands are documented and likely to run.
 14. Summarize changed files, commands to run, assumptions, and remaining manual screenshot tasks.
 
-Required commands from repository root:
+Required commands from repository root after activating `.venv`:
 
 ```bash
 python Membangun_model/telco_customer_churn_preprocessing/preprocess.py
@@ -77,8 +87,8 @@ Required MLflow Project commands:
 
 ```bash
 cd Membangun_model
-mlflow run . -e main
-mlflow run . -e tuning
+mlflow run . -e main --env-manager local
+mlflow run . -e tuning --env-manager local
 ```
 
 Required GitHub Actions secrets:
@@ -96,7 +106,7 @@ Do not print secret values.
 At the end, provide:
 
 1. Created/modified files.
-2. Exact commands to run locally.
+2. Exact commands to create/activate `.venv`, install dependencies, and run locally.
 3. GitHub Actions notes.
 4. Docker run notes.
 5. Prometheus/Grafana notes.

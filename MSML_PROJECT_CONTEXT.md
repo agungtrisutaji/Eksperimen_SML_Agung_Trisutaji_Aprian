@@ -472,6 +472,7 @@ Required final screenshots:
 Never commit:
 
 ```text
+.venv/
 .env
 API keys
 access tokens
@@ -482,6 +483,8 @@ MLFLOW credentials
 ```
 
 Do not print secret values in CI logs.
+
+Do not commit `.venv/`.
 
 Only check whether secrets exist using conditional logic.
 
@@ -505,7 +508,65 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 ```
 
-## 16. Final Submission Reminder
+## 16. Local Dependency and `.venv` Requirement
+
+All local dependencies must be installed in a virtual environment named `.venv` at the current workspace root.
+
+Expected local structure:
+
+```text
+./
+├── .venv/                  # local only, ignored by Git
+├── Membangun_model/
+├── Monitoring dan Logging/
+├── AGENTS.md
+└── MSML_PROJECT_CONTEXT.md
+```
+
+`.venv/` must be ignored in `.gitignore`.
+
+Local setup for WSL/Linux/macOS:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r Membangun_model/requirements.txt
+python -m pip install -r "Monitoring dan Logging/requirements.txt"
+```
+
+Local setup for Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r Membangun_model/requirements.txt
+python -m pip install -r "Monitoring dan Logging/requirements.txt"
+```
+
+When `.venv` is active, run:
+
+```bash
+python Membangun_model/telco_customer_churn_preprocessing/preprocess.py
+python Membangun_model/modelling.py
+python Membangun_model/modelling_tuning.py
+python "Monitoring dan Logging/7.Inference.py"
+```
+
+For MLflow Project, prefer:
+
+```bash
+cd Membangun_model
+mlflow run . -e main --env-manager local
+mlflow run . -e tuning --env-manager local
+```
+
+Keep `conda.yaml` for MLflow Project compatibility, but the main local workflow must use `.venv`.
+
+GitHub Actions should also create `.venv` in the runner and run all install/training commands from that virtual environment. Do not rely on global Python packages.
+
+## 17. Final Submission Reminder
 
 The final ZIP should be named:
 
@@ -517,7 +578,7 @@ The ZIP should contain this workspace's required submission contents, starting w
 
 Do not create ZIP inside ZIP.
 
-## 17. Monitoring and Optimization Learning Context
+## 18. Monitoring and Optimization Learning Context
 
 The project must align with the Dicoding learning material **Monitoring dan Optimasi ML**.
 
