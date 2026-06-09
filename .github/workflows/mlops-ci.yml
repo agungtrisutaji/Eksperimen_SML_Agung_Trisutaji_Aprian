@@ -16,6 +16,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       DOCKER_IMAGE: agungtrisutaji/telco-churn-mlops:latest
+      MLFLOW_DOCKER_IMAGE: agungtrisutaji/telco-churn-mlops
 
     steps:
       - name: Checkout repository
@@ -46,42 +47,66 @@ jobs:
             fi
           done
 
-      - name: Check dataset presence
+      - name: Check datasets
         shell: bash
         run: |
+          test -f "telco_customer_churn_raw/WA_Fn-UseC_-Telco-Customer-Churn.csv"
           test -f "Membangun_model/telco_customer_churn_preprocessing/WA_Fn-UseC_-Telco-Customer-Churn.csv"
 
-      - name: Run preprocessing
+      - name: Run Kriteria 1 automated preprocessing
+        shell: bash
+        run: |
+          source .venv/bin/activate
+          python preprocessing/automate_Agung_Trisutaji_Aprian.py
+
+      - name: Run root preprocessing for serving artifacts
         shell: bash
         run: |
           source .venv/bin/activate
           python Membangun_model/telco_customer_churn_preprocessing/preprocess.py
 
-      - name: Run baseline training
+      - name: Run MLflow Project main entry point
         shell: bash
         run: |
           source .venv/bin/activate
-          python Membangun_model/modelling.py
+          cd Workflow-CI/MLProject
+          mlflow run . -e main --env-manager local
 
-      - name: Run lightweight tuning
+      - name: Run MLflow Project tuning entry point
         shell: bash
         run: |
           source .venv/bin/activate
-          python Membangun_model/modelling_tuning.py
+          cd Workflow-CI/MLProject
+          mlflow run . -e tuning --env-manager local
 
-      - name: Upload processed data and model artifacts
+      - name: Build Docker image with MLflow and fallback Dockerfile
+        shell: bash
+        run: |
+          source .venv/bin/activate
+          MODEL_URI="$(python -c 'import json; from pathlib import Path; p=Path("Workflow-CI/MLProject/artifacts/model_info.json"); print(json.loads(p.read_text()).get("model_uri", "") if p.exists() else "")')"
+          if [ -n "${MODEL_URI}" ]; then
+            echo "Building Docker image with mlflow models build-docker"
+            if mlflow models build-docker -m "${MODEL_URI}" -n "${MLFLOW_DOCKER_IMAGE}"; then
+              docker tag "${MLFLOW_DOCKER_IMAGE}" "${DOCKER_IMAGE}" || docker tag "${MLFLOW_DOCKER_IMAGE}:latest" "${DOCKER_IMAGE}"
+            else
+              echo "MLflow build-docker failed; falling back to Monitoring dan Logging/Dockerfile"
+              docker build -f "Monitoring dan Logging/Dockerfile" -t "${DOCKER_IMAGE}" .
+            fi
+          else
+            echo "model_uri not found; falling back to Monitoring dan Logging/Dockerfile"
+            docker build -f "Monitoring dan Logging/Dockerfile" -t "${DOCKER_IMAGE}" .
+          fi
+
+      - name: Upload preprocessing and model artifacts
         uses: actions/upload-artifact@v4
         with:
           name: telco-churn-mlops-artifacts
           path: |
+            preprocessing/telco_customer_churn_preprocessing/
             Membangun_model/telco_customer_churn_preprocessing/processed/
             Membangun_model/telco_customer_churn_preprocessing/artifacts/
             Membangun_model/artifacts/
-
-      - name: Build Docker image
-        shell: bash
-        run: |
-          docker build -f "Monitoring dan Logging/Dockerfile" -t "${DOCKER_IMAGE}" .
+            Workflow-CI/MLProject/artifacts/
 
       - name: Log in to Docker Hub
         if: ${{ env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != '' }}
@@ -95,4 +120,3 @@ jobs:
         shell: bash
         run: |
           docker push "${DOCKER_IMAGE}"
-
