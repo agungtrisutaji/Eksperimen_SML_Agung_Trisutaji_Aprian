@@ -1,79 +1,14 @@
-# Eksperimen SML - Agung Trisutaji Aprian
+Repository GitHub Kriteria 1:
+https://github.com/agungtrisutaji/Eksperimen_SML_Agung_Trisutaji_Aprian
 
-Repository GitHub public:
+Notebook eksperimen:
+https://github.com/agungtrisutaji/Eksperimen_SML_Agung_Trisutaji_Aprian/blob/main/preprocessing/Eksperimen_Agung_Trisutaji_Aprian.ipynb
 
-```text
-https://github.com/agungtrisutaji/Membangun-Sistem-Machine-Learning
-```
+Script automated preprocessing:
+https://github.com/agungtrisutaji/Eksperimen_SML_Agung_Trisutaji_Aprian/blob/main/preprocessing/automate_Agung_Trisutaji_Aprian.py
 
-Repository ini digunakan untuk submission Dicoding **Membangun Sistem Machine Learning** dan berisi:
+Workflow preprocessing:
+https://github.com/agungtrisutaji/Eksperimen_SML_Agung_Trisutaji_Aprian/actions
 
-- eksperimen dataset;
-- notebook EDA dan preprocessing;
-- automated preprocessing workflow;
-- model training dengan MLflow;
-- MLflow Project;
-- CI workflow;
-- Docker image workflow;
-- monitoring dan logging.
-
-Submission identity:
-
-```text
-Student name        : Agung Trisutaji Aprian
-Dicoding username   : agungtrisutaji
-GitHub username     : agungtrisutaji
-Docker Hub username : agungtrisutaji
-DagsHub username    : agungtrisutaji
-Grafana dashboard   : agungtrisutaji
-```
-
-Dataset:
-
-```text
-Telco Customer Churn
-Source: Kaggle blastchar/telco-customer-churn
-Target: Churn
-Problem: binary classification
-```
-
-Kriteria 1 files:
-
-```text
-telco_customer_churn_raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
-preprocessing/Eksperimen_Agung_Trisutaji_Aprian.ipynb
-preprocessing/automate_Agung_Trisutaji_Aprian.py
-preprocessing/telco_customer_churn_preprocessing/
-.github/workflows/preprocessing.yml
-```
-
-Local validation command:
-
-```bash
-python preprocessing/automate_Agung_Trisutaji_Aprian.py
-```
-
-Notebook structure:
-
-```text
-1. Perkenalan Dataset
-2. Import Library
-3. Memuat Dataset
-4. Exploratory Data Analysis (EDA)
-5. Data Preprocessing
-```
-
-Preprocessing summary:
-
-1. Load the Telco Customer Churn dataset from `telco_customer_churn_raw/`.
-2. Convert `TotalCharges` to numeric.
-3. Drop `customerID`.
-4. Map `Churn`: `No -> 0`, `Yes -> 1`.
-5. Split train and test data with stratification.
-6. Fit preprocessing only on training data.
-7. Use median imputation and standard scaling for numeric features.
-8. Use most-frequent imputation and one-hot encoding for categorical features.
-9. Save processed train/test data, feature names, preprocessing summary, and preprocessor artifact.
-
-Do not include tokens, passwords, `.env`, `.venv`, `.git`, or fake screenshots in the final submission.
-
+Catatan:
+Repository ini public dan digunakan untuk Kriteria 1. Repository berisi notebook eksperimen, dataset raw, script preprocessing otomatis, hasil preprocessing, dan workflow preprocessing.
