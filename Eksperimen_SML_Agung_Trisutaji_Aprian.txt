@@ -1,5 +1,22 @@
 # Eksperimen SML - Agung Trisutaji Aprian
 
+Repository GitHub public:
+
+```text
+https://github.com/agungtrisutaji/Membangun-Sistem-Machine-Learning
+```
+
+Repository ini digunakan untuk submission Dicoding **Membangun Sistem Machine Learning** dan berisi:
+
+- eksperimen dataset;
+- notebook EDA dan preprocessing;
+- automated preprocessing workflow;
+- model training dengan MLflow;
+- MLflow Project;
+- CI workflow;
+- Docker image workflow;
+- monitoring dan logging.
+
 Submission identity:
 
 ```text
@@ -20,52 +37,43 @@ Target: Churn
 Problem: binary classification
 ```
 
-Notebook:
+Kriteria 1 files:
 
 ```text
-Template_Eksperimen_MSML.ipynb
+telco_customer_churn_raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+preprocessing/Eksperimen_Agung_Trisutaji_Aprian.ipynb
+preprocessing/automate_Agung_Trisutaji_Aprian.py
+preprocessing/telco_customer_churn_preprocessing/
+.github/workflows/preprocessing.yml
 ```
 
-Experiment summary:
+Local validation command:
 
-1. Load the Telco Customer Churn dataset from the required raw CSV path.
-2. Inspect rows, columns, duplicate records, missing values, target distribution, numeric columns, and categorical columns.
-3. Convert `TotalCharges` to numeric because the raw CSV stores some values as text and blank strings.
-4. Drop `customerID` because it is an identifier and not a useful predictive feature.
-5. Map target `Churn`: `No -> 0`, `Yes -> 1`.
-6. Split train and test data with stratification to keep target distribution stable.
-7. Fit preprocessing only on training data to avoid data leakage.
-8. Use median imputation and standard scaling for numeric features.
-9. Use most-frequent imputation and one-hot encoding for categorical features.
-10. Train baseline `LogisticRegression` and `RandomForestClassifier` models.
-11. Track accuracy, precision, recall, f1_score, and roc_auc with MLflow.
-12. Run lightweight hyperparameter tuning for Random Forest.
-13. Select the best model by `f1_score`.
-14. Serve the selected model through FastAPI.
-15. Monitor serving behavior with Prometheus metrics and Grafana alerting.
+```bash
+python preprocessing/automate_Agung_Trisutaji_Aprian.py
+```
 
-Primary metric:
+Notebook structure:
 
 ```text
-f1_score
+1. Perkenalan Dataset
+2. Import Library
+3. Memuat Dataset
+4. Exploratory Data Analysis (EDA)
+5. Data Preprocessing
 ```
 
-Local commands:
+Preprocessing summary:
 
-```bash
-python Membangun_model/telco_customer_churn_preprocessing/preprocess.py
-python Membangun_model/modelling.py
-python Membangun_model/modelling_tuning.py
-python "Monitoring dan Logging/7.Inference.py"
-```
+1. Load the Telco Customer Churn dataset from `telco_customer_churn_raw/`.
+2. Convert `TotalCharges` to numeric.
+3. Drop `customerID`.
+4. Map `Churn`: `No -> 0`, `Yes -> 1`.
+5. Split train and test data with stratification.
+6. Fit preprocessing only on training data.
+7. Use median imputation and standard scaling for numeric features.
+8. Use most-frequent imputation and one-hot encoding for categorical features.
+9. Save processed train/test data, feature names, preprocessing summary, and preprocessor artifact.
 
-MLflow Project commands:
-
-```bash
-cd Membangun_model
-mlflow run . -e main --env-manager local
-mlflow run . -e tuning --env-manager local
-```
-
-Manual screenshots still need to be captured after running MLflow, GitHub Actions, Docker Hub, FastAPI, Prometheus, and Grafana.
+Do not include tokens, passwords, `.env`, `.venv`, `.git`, or fake screenshots in the final submission.
 
