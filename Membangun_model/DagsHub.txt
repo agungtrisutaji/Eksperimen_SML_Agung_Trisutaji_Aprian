@@ -1,18 +1,12 @@
-# DagsHub and MLflow Tracking
+DagsHub / MLflow Tracking Repository:
+https://dagshub.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian
 
-Expected MLflow Tracking URI:
+MLflow Tracking URI:
+https://dagshub.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian.mlflow
 
-```text
-https://dagshub.com/agungtrisutaji/Membangun-Sistem-Machine-Learning.mlflow
-```
+Experiment Name:
+telco-customer-churn-agungtrisutaji
 
-Use environment variables only:
-
-```text
-DAGSHUB_USERNAME=agungtrisutaji
-DAGSHUB_TOKEN=<your token>
-MLFLOW_TRACKING_URI=https://dagshub.com/agungtrisutaji/Membangun-Sistem-Machine-Learning.mlflow
-```
-
-Do not commit tokens, passwords, `.env`, or printed credential values.
-
+Catatan:
+Artefak model, metrik, parameter, confusion matrix, classification report, dan artefak tuning disimpan ke DagsHub melalui MLflow Tracking.
+Token dan credential tidak disimpan di repository. Credential digunakan melalui GitHub Actions Secrets.
