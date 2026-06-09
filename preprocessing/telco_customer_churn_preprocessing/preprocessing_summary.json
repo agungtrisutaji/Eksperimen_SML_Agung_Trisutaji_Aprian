@@ -1,0 +1,63 @@
+{
+  "dataset": "Telco Customer Churn",
+  "source": "Kaggle blastchar/telco-customer-churn",
+  "raw_data_path": "telco_customer_churn_raw\\WA_Fn-UseC_-Telco-Customer-Churn.csv",
+  "target_column": "Churn",
+  "target_mapping": {
+    "No": 0,
+    "Yes": 1
+  },
+  "dropped_columns": [
+    "customerID"
+  ],
+  "rows": 7043,
+  "columns": 21,
+  "numeric_columns": [
+    "SeniorCitizen",
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges"
+  ],
+  "categorical_columns": [
+    "gender",
+    "Partner",
+    "Dependents",
+    "PhoneService",
+    "MultipleLines",
+    "InternetService",
+    "OnlineSecurity",
+    "OnlineBackup",
+    "DeviceProtection",
+    "TechSupport",
+    "StreamingTV",
+    "StreamingMovies",
+    "Contract",
+    "PaperlessBilling",
+    "PaymentMethod"
+  ],
+  "train_rows": 5634,
+  "test_rows": 1409,
+  "test_size": 0.2,
+  "random_state": 42,
+  "totalcharges_missing_after_numeric_conversion": 11,
+  "preprocessing": {
+    "numeric": [
+      "SimpleImputer(strategy='median')",
+      "StandardScaler"
+    ],
+    "categorical": [
+      "SimpleImputer(strategy='most_frequent')",
+      "OneHotEncoder(handle_unknown='ignore')"
+    ],
+    "fit_scope": "fit only on X_train, transform X_train and X_test"
+  },
+  "outputs": [
+    "X_train.csv",
+    "X_test.csv",
+    "y_train.csv",
+    "y_test.csv",
+    "feature_names.json",
+    "preprocessing_summary.json",
+    "preprocessor.pkl"
+  ]
+}
