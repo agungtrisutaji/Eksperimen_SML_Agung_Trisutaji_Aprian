@@ -83,6 +83,12 @@ Create a dashboard named:
 agungtrisutaji
 ```
 
+Advanced requirement:
+
+- Show at least 10 different Grafana metric panels.
+- Configure at least 3 Grafana alert rules.
+- Capture real screenshots manually; do not create fake screenshots.
+
 Recommended panels:
 
 - Total requests: `model_requests_total`
@@ -104,6 +110,8 @@ Recommended alert rules:
 - Model health down: `model_health_status == 0`.
 - Model loaded down: `model_loaded_status == 0`.
 
+Use at least 3 of the alert rules above for Advanced evidence.
+
 ## Manual Screenshot Checklist
 
 Place screenshots in these folders:
@@ -116,4 +124,3 @@ Place screenshots in these folders:
 ```
 
 Do not invent screenshots. Capture them manually after services are running.
-
