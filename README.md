@@ -172,7 +172,7 @@ MLFLOW_TRACKING_URI
 Expected tracking URI:
 
 ```text
-https://dagshub.com/agungtrisutaji/Membangun-Sistem-Machine-Learning.mlflow
+https://dagshub.com/agungtrisutaji/Eksperimen_SML_Agung_Trisutaji_Aprian.mlflow
 ```
 
 Never print or commit secret values.
