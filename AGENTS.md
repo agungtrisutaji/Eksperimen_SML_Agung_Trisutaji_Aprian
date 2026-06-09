@@ -168,7 +168,7 @@ DOCKERHUB_TOKEN
 Expected MLflow Tracking URI placeholder:
 
 ```text
-https://dagshub.com/agungtrisutaji/Membangun-Sistem-Machine-Learning.mlflow
+https://dagshub.com/agungtrisutaji/Eksperimen_SML_Agung_Trisutaji_Aprian.mlflow
 ```
 
 ## Commands That Must Work

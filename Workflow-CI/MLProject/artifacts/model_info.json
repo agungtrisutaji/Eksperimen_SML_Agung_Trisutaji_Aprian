@@ -4,9 +4,9 @@
   "best_metric": "f1_score",
   "best_metric_value": 0.6136125654450262,
   "best_model_name": "LogisticRegression",
-  "best_run_id": "666ea191c6dd4aa3ae585f8c4b07fc55",
-  "model_uri": "runs:/666ea191c6dd4aa3ae585f8c4b07fc55/model",
-  "model_artifact_uri": "runs:/666ea191c6dd4aa3ae585f8c4b07fc55/model",
+  "best_run_id": "99aafbbf23e14592b7693083438ef36a",
+  "model_uri": "runs:/99aafbbf23e14592b7693083438ef36a/model",
+  "model_artifact_uri": "runs:/99aafbbf23e14592b7693083438ef36a/model",
   "metrics": {
     "accuracy": 0.7381121362668559,
     "precision": 0.504302925989673,
@@ -14,5 +14,5 @@
     "f1_score": 0.6136125654450262,
     "roc_auc": 0.8412978893797307
   },
-  "artifact": "Membangun_model\\artifacts\\best_model.pkl"
+  "artifact": "artifacts\\best_model.pkl"
 }

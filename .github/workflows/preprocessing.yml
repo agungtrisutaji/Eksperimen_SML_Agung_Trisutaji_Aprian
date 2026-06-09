@@ -1,0 +1,45 @@
+name: Telco Churn Preprocessing
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  preprocessing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Create and populate .venv
+        shell: bash
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install -r Membangun_model/requirements.txt
+
+      - name: Check raw dataset
+        shell: bash
+        run: |
+          test -f "telco_customer_churn_raw/WA_Fn-UseC_-Telco-Customer-Churn.csv"
+
+      - name: Run automated preprocessing
+        shell: bash
+        run: |
+          source .venv/bin/activate
+          python preprocessing/automate_Agung_Trisutaji_Aprian.py
+
+      - name: Upload preprocessing outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: telco-customer-churn-preprocessing
+          path: preprocessing/telco_customer_churn_preprocessing/
+

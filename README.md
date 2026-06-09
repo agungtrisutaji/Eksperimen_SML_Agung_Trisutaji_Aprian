@@ -22,8 +22,18 @@ Dataset:
 
 ```text
 .
+├── .github/
+│   └── workflows/
+│       ├── preprocessing.yml
+│       └── mlops-ci.yml
 ├── Eksperimen_SML_Agung_Trisutaji_Aprian.txt
 ├── Template_Eksperimen_MSML.ipynb
+├── telco_customer_churn_raw/
+│   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
+├── preprocessing/
+│   ├── Eksperimen_Agung_Trisutaji_Aprian.ipynb
+│   ├── automate_Agung_Trisutaji_Aprian.py
+│   └── telco_customer_churn_preprocessing/
 ├── Membangun_model/
 │   ├── MLproject
 │   ├── conda.yaml
@@ -50,6 +60,11 @@ Dataset:
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   └── README.md
+├── Workflow-CI/
+│   ├── .github/workflows/mlops-ci.yml
+│   └── MLProject/
+├── scripts/
+│   └── prepare_submission.py
 ├── Workflow-CI.txt
 └── README.md
 ```
@@ -85,6 +100,7 @@ python -m pip install -r "Monitoring dan Logging/requirements.txt"
 From the repository root after activating `.venv`:
 
 ```bash
+python preprocessing/automate_Agung_Trisutaji_Aprian.py
 python Membangun_model/telco_customer_churn_preprocessing/preprocess.py
 python Membangun_model/modelling.py
 python Membangun_model/modelling_tuning.py
@@ -92,6 +108,26 @@ python "Monitoring dan Logging/7.Inference.py"
 ```
 
 The preprocessing script creates train/test data and `preprocessor.pkl`. The modelling scripts log metrics to MLflow and save local model artifacts.
+
+## Kriteria 1 Preprocessing
+
+Notebook final:
+
+```text
+preprocessing/Eksperimen_Agung_Trisutaji_Aprian.ipynb
+```
+
+Automated preprocessing output:
+
+```text
+preprocessing/telco_customer_churn_preprocessing/
+```
+
+Workflow:
+
+```text
+.github/workflows/preprocessing.yml
+```
 
 ## MLflow Project
 
@@ -136,7 +172,7 @@ MLFLOW_TRACKING_URI
 Expected tracking URI:
 
 ```text
-https://dagshub.com/agungtrisutaji/Membangun-Sistem-Machine-Learning.mlflow
+https://dagshub.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian.mlflow
 ```
 
 Never print or commit secret values.
@@ -207,10 +243,11 @@ Recommended alert rules:
 
 ## GitHub Actions
 
-Workflow file:
+Workflow files:
 
 ```text
 .github/workflows/mlops-ci.yml
+.github/workflows/preprocessing.yml
 ```
 
 Required secrets:
@@ -223,7 +260,21 @@ DOCKERHUB_USERNAME
 DOCKERHUB_TOKEN
 ```
 
-The runner creates `.venv`, installs dependencies inside it, runs preprocessing/training/tuning, uploads artifacts, builds the Docker image, and pushes only when Docker Hub secrets are configured.
+The main runner creates `.venv`, installs dependencies inside it, runs preprocessing, runs MLflow Project from `Workflow-CI/MLProject`, uploads artifacts, tries Advanced Docker build with `mlflow models build-docker`, falls back to the manual Dockerfile if needed, and pushes only when Docker Hub secrets are configured.
+
+## Submission Staging
+
+Create the final staging folder:
+
+```bash
+python scripts/prepare_submission.py
+```
+
+Create the final ZIP only when ready:
+
+```bash
+python scripts/prepare_submission.py --zip
+```
 
 ## Manual Screenshots Still Required
 
@@ -248,4 +299,3 @@ Monitoring dan Logging/4.bukti monitoring Prometheus/
 Monitoring dan Logging/5.bukti monitoring Grafana/
 Monitoring dan Logging/6.bukti alerting Grafana/
 ```
-

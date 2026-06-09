@@ -13,8 +13,6 @@ jobs:
       DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
       DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-      MLFLOW_TRACKING_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
-      MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       DOCKER_IMAGE: agungtrisutaji/telco-churn-mlops:latest
@@ -71,8 +69,6 @@ jobs:
         shell: bash
         run: |
           source .venv/bin/activate
-          export MLFLOW_TRACKING_USERNAME="${DAGSHUB_USERNAME}"
-          export MLFLOW_TRACKING_PASSWORD="${DAGSHUB_TOKEN}"
           cd Workflow-CI/MLProject
           mlflow run . -e main --env-manager local
 
@@ -80,8 +76,6 @@ jobs:
         shell: bash
         run: |
           source .venv/bin/activate
-          export MLFLOW_TRACKING_USERNAME="${DAGSHUB_USERNAME}"
-          export MLFLOW_TRACKING_PASSWORD="${DAGSHUB_TOKEN}"
           cd Workflow-CI/MLProject
           mlflow run . -e tuning --env-manager local
 

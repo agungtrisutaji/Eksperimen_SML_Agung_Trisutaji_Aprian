@@ -1,60 +1,23 @@
-# Workflow CI
+Repository GitHub Kriteria 3:
+https://github.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian
 
-Workflow file:
+Workflow GitHub Actions:
+https://github.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian/actions
 
-```text
-.github/workflows/mlops-ci.yml
-```
+File workflow:
+https://github.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian/blob/main/.github/workflows/mlops-ci.yml
 
-Triggers:
+MLflow Project:
+https://github.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian/tree/main/MLProject
 
-- `push`
-- `pull_request`
-- `workflow_dispatch`
+DagsHub / MLflow Tracking:
+https://dagshub.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian
 
-Runner:
+MLflow Tracking URI:
+https://dagshub.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian.mlflow
 
-```text
-ubuntu-latest
-Python 3.11
-```
+Docker Hub:
+https://hub.docker.com/r/agungtrisutaji/telco-churn-mlops
 
-The workflow creates a repository-local virtual environment:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r Membangun_model/requirements.txt
-python -m pip install -r "Monitoring dan Logging/requirements.txt"
-```
-
-Main CI commands:
-
-```bash
-python Membangun_model/telco_customer_churn_preprocessing/preprocess.py
-python Membangun_model/modelling.py
-python Membangun_model/modelling_tuning.py
-docker build -f "Monitoring dan Logging/Dockerfile" -t agungtrisutaji/telco-churn-mlops:latest .
-```
-
-Required GitHub Actions secrets:
-
-```text
-DAGSHUB_USERNAME
-DAGSHUB_TOKEN
-MLFLOW_TRACKING_URI
-DOCKERHUB_USERNAME
-DOCKERHUB_TOKEN
-```
-
-Secret values are not printed. The workflow only checks whether each secret is configured. Docker Hub push runs only when `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are present.
-
-Uploaded artifacts:
-
-```text
-Membangun_model/telco_customer_churn_preprocessing/processed/
-Membangun_model/telco_customer_churn_preprocessing/artifacts/
-Membangun_model/artifacts/
-```
-
+Catatan:
+Repository ini public dan digunakan untuk Kriteria 3. Workflow CI menjalankan MLflow Project, menyimpan artefak, melakukan build Docker image, dan push image ke Docker Hub.

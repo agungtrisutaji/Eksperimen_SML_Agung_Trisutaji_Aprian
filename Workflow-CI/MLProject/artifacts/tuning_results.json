@@ -15,10 +15,10 @@
     "f1_score": 0.6265060240963856,
     "roc_auc": 0.8414735591206179
   },
-  "run_id": "4526c3f611ca43769354bf3db8be1744",
-  "model_uri": "runs:/4526c3f611ca43769354bf3db8be1744/model",
-  "model_artifact_uri": "runs:/4526c3f611ca43769354bf3db8be1744/model",
-  "artifact": "Membangun_model\\artifacts\\tuned_model.pkl",
+  "run_id": "1b2d47bf75f34f35a0bbf007921b8291",
+  "model_uri": "runs:/1b2d47bf75f34f35a0bbf007921b8291/model",
+  "model_artifact_uri": "runs:/1b2d47bf75f34f35a0bbf007921b8291/model",
+  "artifact": "artifacts\\tuned_model.pkl",
   "local_evaluation_artifacts": [
     "tuning_classification_report.txt",
     "tuning_confusion_matrix.png",

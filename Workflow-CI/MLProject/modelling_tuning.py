@@ -28,8 +28,8 @@ from sklearn.metrics import (
 from sklearn.model_selection import GridSearchCV
 
 
-ROOT = Path(__file__).resolve().parents[1]
-MODEL_DIR = ROOT / "Membangun_model"
+ROOT = Path(__file__).resolve().parent
+MODEL_DIR = ROOT
 PREPROCESSING_DIR = MODEL_DIR / "telco_customer_churn_preprocessing"
 PROCESSED_DIR = PREPROCESSING_DIR / "processed"
 ARTIFACT_DIR = MODEL_DIR / "artifacts"
