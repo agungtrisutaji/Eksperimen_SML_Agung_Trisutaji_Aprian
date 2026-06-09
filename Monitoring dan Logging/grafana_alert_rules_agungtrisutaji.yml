@@ -1,0 +1,162 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: telco-churn-alert-rules
+    folder: agungtrisutaji
+    interval: 30s
+    rules:
+      - uid: api_down_telco_churn
+        title: API Down - Telco Churn Model
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: prometheus
+            model:
+              datasource: {type: prometheus, uid: prometheus}
+              editorMode: code
+              expr: up{job="telco-churn-fastapi-from-docker"}
+              instant: true
+              intervalMs: 1000
+              legendFormat: API Up
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: __expr__
+            model:
+              datasource: {type: __expr__, uid: __expr__}
+              expression: A
+              reducer: last
+              refId: B
+              type: reduce
+              settings: {mode: dropNN}
+          - refId: C
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: __expr__
+            model:
+              datasource: {type: __expr__, uid: __expr__}
+              expression: B
+              refId: C
+              type: threshold
+              conditions:
+                - evaluator: {params: [1], type: lt}
+                  operator: {type: and}
+                  query: {params: [C]}
+                  reducer: {type: last}
+                  type: query
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 30s
+        annotations:
+          summary: API Telco Churn tidak bisa di-scrape oleh Prometheus.
+          description: Nilai up untuk job telco-churn-fastapi-from-docker berada di bawah 1.
+        labels: {severity: critical, service: telco-churn-model, submission: dicoding-msml}
+        isPaused: false
+
+      - uid: model_not_loaded
+        title: Model Not Loaded
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: prometheus
+            model:
+              datasource: {type: prometheus, uid: prometheus}
+              editorMode: code
+              expr: model_loaded_status
+              instant: true
+              intervalMs: 1000
+              legendFormat: Model Loaded
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: __expr__
+            model:
+              datasource: {type: __expr__, uid: __expr__}
+              expression: A
+              reducer: last
+              refId: B
+              type: reduce
+              settings: {mode: dropNN}
+          - refId: C
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: __expr__
+            model:
+              datasource: {type: __expr__, uid: __expr__}
+              expression: B
+              refId: C
+              type: threshold
+              conditions:
+                - evaluator: {params: [1], type: lt}
+                  operator: {type: and}
+                  query: {params: [C]}
+                  reducer: {type: last}
+                  type: query
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 30s
+        annotations:
+          summary: Model Telco Churn belum berhasil dimuat.
+          description: Metrik model_loaded_status berada di bawah 1.
+        labels: {severity: critical, service: telco-churn-model, submission: dicoding-msml}
+        isPaused: false
+
+
+      - uid: high_prediction_latency
+        title: High Prediction Latency
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: prometheus
+            model:
+              datasource: {type: prometheus, uid: prometheus}
+              editorMode: code
+              expr: '(sum(model_prediction_latency_seconds_sum) / clamp_min(sum(model_prediction_latency_seconds_count), 1)) OR vector(0)'
+              instant: true
+              intervalMs: 1000
+              legendFormat: Average Prediction Latency
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: __expr__
+            model:
+              datasource: {type: __expr__, uid: __expr__}
+              expression: A
+              reducer: last
+              refId: B
+              type: reduce
+              settings: {mode: dropNN}
+          - refId: C
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: __expr__
+            model:
+              datasource: {type: __expr__, uid: __expr__}
+              expression: B
+              refId: C
+              type: threshold
+              conditions:
+                - evaluator: {params: [0.05], type: gt}
+                  operator: {type: and}
+                  query: {params: [C]}
+                  reducer: {type: last}
+                  type: query
+        noDataState: OK
+        execErrState: Alerting
+        for: 30s
+        annotations:
+          summary: Latensi prediksi model tinggi.
+          description: Rata-rata latensi prediksi lebih besar dari 0.01 detik untuk kebutuhan test alert submission.
+        labels:
+          severity: warning
+          service: telco-churn-model
+          submission: dicoding-msml
+          metric: prediction_latency
+        isPaused: false
