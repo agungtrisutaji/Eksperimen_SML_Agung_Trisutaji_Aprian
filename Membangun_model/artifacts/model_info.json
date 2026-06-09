@@ -1,8 +1,12 @@
 {
   "experiment_name": "telco-customer-churn-agungtrisutaji",
   "selection_metric": "f1_score",
+  "best_metric": "f1_score",
+  "best_metric_value": 0.6136125654450262,
   "best_model_name": "LogisticRegression",
-  "best_run_id": "072484a1ad9a439eaa82a82e37848bf2",
+  "best_run_id": "666ea191c6dd4aa3ae585f8c4b07fc55",
+  "model_uri": "runs:/666ea191c6dd4aa3ae585f8c4b07fc55/model",
+  "model_artifact_uri": "runs:/666ea191c6dd4aa3ae585f8c4b07fc55/model",
   "metrics": {
     "accuracy": 0.7381121362668559,
     "precision": 0.504302925989673,

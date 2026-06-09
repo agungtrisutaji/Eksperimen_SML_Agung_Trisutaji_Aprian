@@ -7,12 +7,24 @@ import sys
 from pathlib import Path
 
 import joblib
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import mlflow
 import mlflow.sklearn
 import pandas as pd
 from mlflow.models import infer_signature
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import (
+    ConfusionMatrixDisplay,
+    accuracy_score,
+    classification_report,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 from sklearn.model_selection import GridSearchCV
 
 
@@ -77,6 +89,63 @@ def evaluate(model, X_test: pd.DataFrame, y_test: pd.Series) -> dict[str, float]
     }
 
 
+def save_and_log_evaluation_artifacts(
+    model,
+    X_test: pd.DataFrame,
+    y_test: pd.Series,
+    metrics: dict[str, float],
+) -> None:
+    y_pred = model.predict(X_test)
+
+    report = classification_report(y_test, y_pred, target_names=["No Churn", "Churn"])
+    report_path = ARTIFACT_DIR / "tuning_classification_report.txt"
+    report_path.write_text(report, encoding="utf-8")
+    mlflow.log_artifact(str(report_path), artifact_path="tuning_evaluation")
+
+    metric_info_path = ARTIFACT_DIR / "tuning_metric_info.json"
+    metric_info_path.write_text(
+        json.dumps(
+            {
+                "selection_metric": "f1_score",
+                "metrics": metrics,
+                "notes": "Metrics calculated on the held-out test set.",
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    mlflow.log_artifact(str(metric_info_path), artifact_path="tuning_evaluation")
+
+    display = ConfusionMatrixDisplay.from_predictions(
+        y_test,
+        y_pred,
+        display_labels=["No Churn", "Churn"],
+        cmap="Blues",
+        colorbar=False,
+    )
+    display.ax_.set_title("Confusion Matrix - Tuned RandomForestClassifier")
+    confusion_matrix_path = ARTIFACT_DIR / "tuning_confusion_matrix.png"
+    plt.tight_layout()
+    plt.savefig(confusion_matrix_path, dpi=150)
+    plt.close()
+    mlflow.log_artifact(str(confusion_matrix_path), artifact_path="tuning_evaluation")
+
+    if hasattr(model, "feature_importances_"):
+        feature_importance = (
+            pd.DataFrame(
+                {
+                    "feature": X_test.columns,
+                    "importance": model.feature_importances_,
+                }
+            )
+            .sort_values("importance", ascending=False)
+            .reset_index(drop=True)
+        )
+        feature_importance_path = ARTIFACT_DIR / "tuning_feature_importance.csv"
+        feature_importance.to_csv(feature_importance_path, index=False)
+        mlflow.log_artifact(str(feature_importance_path), artifact_path="tuning_evaluation")
+
+
 def tune() -> dict[str, object]:
     ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
     configure_mlflow()
@@ -113,6 +182,7 @@ def tune() -> dict[str, object]:
         mlflow.log_params(search.best_params_)
         mlflow.log_metric("best_cv_f1_score", search.best_score_)
         mlflow.log_metrics(metrics)
+        save_and_log_evaluation_artifacts(best_model, X_test, y_test, metrics)
 
         input_example = X_test.head(5)
         signature = infer_signature(input_example, best_model.predict(input_example))
@@ -124,6 +194,8 @@ def tune() -> dict[str, object]:
         )
 
         run_id = mlflow.active_run().info.run_id
+        model_uri = f"runs:/{run_id}/model"
+        model_artifact_uri = model_uri
 
     joblib.dump(best_model, ARTIFACT_DIR / "tuned_model.pkl")
     results = {
@@ -134,7 +206,15 @@ def tune() -> dict[str, object]:
         "best_params": search.best_params_,
         "test_metrics": metrics,
         "run_id": run_id,
+        "model_uri": model_uri,
+        "model_artifact_uri": model_artifact_uri,
         "artifact": str((ARTIFACT_DIR / "tuned_model.pkl").relative_to(ROOT)),
+        "local_evaluation_artifacts": [
+            "tuning_classification_report.txt",
+            "tuning_confusion_matrix.png",
+            "tuning_metric_info.json",
+            "tuning_feature_importance.csv",
+        ],
     }
     (ARTIFACT_DIR / "tuning_results.json").write_text(
         json.dumps(results, indent=2), encoding="utf-8"

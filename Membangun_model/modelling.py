@@ -8,6 +8,9 @@ import tempfile
 from pathlib import Path
 
 import joblib
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import mlflow
 import mlflow.sklearn
@@ -109,6 +112,7 @@ def log_confusion_matrix(model_name: str, model, X_test: pd.DataFrame, y_test: p
 def train() -> dict[str, object]:
     ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
     configure_mlflow()
+    mlflow.sklearn.autolog(log_models=False)
     X_train, X_test, y_train, y_test = load_data()
 
     models = {
@@ -158,12 +162,15 @@ def train() -> dict[str, object]:
                 input_example=input_example,
                 signature=signature,
             )
+            run_id = mlflow.active_run().info.run_id
 
             result = {
                 "model_name": model_name,
                 "metrics": metrics,
                 "params": model.get_params(),
-                "run_id": mlflow.active_run().info.run_id,
+                "run_id": run_id,
+                "model_uri": f"runs:/{run_id}/model",
+                "model_artifact_uri": f"runs:/{run_id}/model",
                 "model": model,
             }
             if best_result is None or metrics["f1_score"] > best_result["metrics"]["f1_score"]:
@@ -178,8 +185,12 @@ def train() -> dict[str, object]:
     model_info = {
         "experiment_name": EXPERIMENT_NAME,
         "selection_metric": "f1_score",
+        "best_metric": "f1_score",
+        "best_metric_value": best_result["metrics"]["f1_score"],
         "best_model_name": best_result["model_name"],
         "best_run_id": best_result["run_id"],
+        "model_uri": best_result["model_uri"],
+        "model_artifact_uri": best_result["model_artifact_uri"],
         "metrics": best_result["metrics"],
         "artifact": str((ARTIFACT_DIR / "best_model.pkl").relative_to(ROOT)),
     }
