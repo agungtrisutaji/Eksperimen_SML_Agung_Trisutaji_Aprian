@@ -18,6 +18,3 @@ https://dagshub.com/agungtrisutaji/Workflow-CI_Agung_Trisutaji_Aprian.mlflow
 
 Docker Hub:
 https://hub.docker.com/r/agungtrisutaji/telco-churn-mlops
-
-Catatan:
-Repository ini public dan digunakan untuk Kriteria 3. Workflow CI menjalankan MLflow Project, menyimpan artefak, melakukan build Docker image, dan push image ke Docker Hub.
