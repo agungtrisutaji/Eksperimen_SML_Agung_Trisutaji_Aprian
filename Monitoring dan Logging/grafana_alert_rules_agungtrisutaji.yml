@@ -3,7 +3,7 @@ apiVersion: 1
 groups:
   - orgId: 1
     name: telco-churn-alert-rules
-    folder: MSML
+    folder: agungtrisutaji
     interval: 30s
     rules:
       - uid: api_down_telco_churn
