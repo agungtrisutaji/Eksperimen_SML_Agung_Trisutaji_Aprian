@@ -3,7 +3,7 @@ apiVersion: 1
 groups:
   - orgId: 1
     name: telco-churn-alert-rules
-    folder: agungtrisutaji
+    folder: MSML
     interval: 30s
     rules:
       - uid: api_down_telco_churn
@@ -159,4 +159,61 @@ groups:
           service: telco-churn-model
           submission: dicoding-msml
           metric: prediction_latency
+        isPaused: false
+
+      - uid: model_health_critical
+        title: Model Health
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              editorMode: builder
+              expr: model_health_status
+              instant: true
+              interval: ""
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: C
+            queryType: expression
+            datasourceUid: __expr__
+            model:
+              conditions:
+                  - evaluator:
+                      params:
+                          - 1
+                      type: lt
+                    operator:
+                      type: and
+                    query:
+                      params:
+                          - C
+                    reducer:
+                      params: []
+                      type: last
+                    type: query
+              datasource:
+                  type: __expr__
+                  uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 1m
+        annotations:
+          description: Metrik model_loaded_health berada di bawah 1.
+          summary: Model Telco Churn bermasalah.
+        labels:
+          service: telco-churn-model
+          severity: critical
+          submission: dicoding-msml
         isPaused: false
